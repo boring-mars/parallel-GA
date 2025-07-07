@@ -28,6 +28,8 @@ public:
     void show_genes() const;
 
     void show_chessboard() const;
+
+    bool operator==(const Chromosome& other) const;
 };
 
 

@@ -103,3 +103,7 @@ void Chromosome::show_chessboard() const {
     }
 
 }
+
+bool Chromosome::operator==(const Chromosome &other) const {
+    return genes == other.genes;
+}

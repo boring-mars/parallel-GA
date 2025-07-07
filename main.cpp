@@ -8,6 +8,7 @@ int generation = 0;
 const int gene_length = 8;
 const double mutation_rate = 0.1;
 int population_size = 100;
+int total_solution_num = 92;
 
 static std::mt19937 generator = std::mt19937(std::random_device{}());
 
@@ -74,20 +75,35 @@ int main() {
         population.push_back(chromosome);
     }
 
+    std::vector<Chromosome> solutions;
     const Chromosome *solution = find_solution(population);
-    while (!solution) {
+    if (solution) {
+        std::cout << "Solution found in generation " << generation << std::endl;
+        solutions.push_back(*solution);
+    }
+
+    while (solutions.size() < total_solution_num) {
         population = generate_population(population);
 
         solution = find_solution(population);
+        if (solution) {
+            auto same = std::find(solutions.begin(), solutions.end(), *solution);
+            if (same != solutions.end()) {
+                continue;
+            }
+            std::cout << "Solution found in generation " << generation << std::endl;
+            solutions.push_back(*solution);
+        }
 
         generation++;
     }
 
-    std::cout << "Solution found in generation: " << generation << std::endl;
-    std::cout << "Genes: ";
-    solution->show_genes();
-    std::cout << "Chessboard:" << std::endl;
-    solution->show_chessboard();
+    for (const auto &solution: solutions) {
+        std::cout << "Genes: ";
+        solution.show_genes();
+        std::cout << "Chessboard:" << std::endl;
+        solution.show_chessboard();
+    }
 
     return 0;
 }
