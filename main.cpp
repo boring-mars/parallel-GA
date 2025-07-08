@@ -8,17 +8,17 @@ int generation = 0;
 const int gene_length = 8;
 const double mutation_rate = 0.1;
 int population_size = 100;
-int total_solution_num = 92;
+int total_solution_num = 30;
 
 static std::mt19937 generator = std::mt19937(std::random_device{}());
 
 Chromosome pick_parent(const std::vector<Chromosome> &population) {
     // Randomly select a parent from the population
-    std::vector<double> possibilities;
+    std::vector<double> possibilities(population_size);
     int max_fitness = gene_length * (gene_length - 1) / 2;
 
-    for (const auto &chromosome: population) {
-        possibilities.push_back(chromosome.get_fitness() / double(max_fitness));
+    for (int i = 0; i < population_size; ++i) {
+        possibilities.at(i) = population.at(i).get_fitness() / double(max_fitness);
     }
 
     double total = std::accumulate(possibilities.begin(), possibilities.end(), 0.0);
@@ -26,7 +26,7 @@ Chromosome pick_parent(const std::vector<Chromosome> &population) {
     double pick_point = distribution(generator);
 
     double accumulator = 0;
-    for (int i = 0; i < population.size(); ++i) {
+    for (int i = 0; i < population_size; ++i) {
         accumulator += possibilities.at(i);
         if (accumulator >= pick_point) {
             return population.at(i);
@@ -56,15 +56,16 @@ std::vector<Chromosome> generate_population(std::vector<Chromosome> &population)
     return new_population;
 }
 
-const Chromosome *find_solution(const std::vector<Chromosome> &population) {
+std::vector<Chromosome> find_solutions(const std::vector<Chromosome> &population) {
+    std::vector<Chromosome> solutions;
     for (const auto &chromosome: population) {
         int max_fitness = gene_length * (gene_length - 1) / 2;
         if (chromosome.get_fitness() == max_fitness) {
-            return &chromosome;
+            solutions.push_back(chromosome);
         }
     }
 
-    return nullptr;
+    return solutions;
 }
 
 
@@ -75,30 +76,32 @@ int main() {
         population.push_back(chromosome);
     }
 
-    std::vector<Chromosome> solutions;
-    const Chromosome *solution = find_solution(population);
-    if (solution) {
-        std::cout << "Solution found in generation " << generation << std::endl;
-        solutions.push_back(*solution);
+    std::vector<Chromosome> output;
+    std::vector<Chromosome> solutions = find_solutions(population);
+    for (const auto &solution: solutions) {
+        auto same = std::find(output.begin(), output.end(), solution);
+        if (same == output.end()) {
+            std::cout << "Solution found in generation " << generation << std::endl;
+            output.push_back(solution);
+        }
     }
 
-    while (solutions.size() < total_solution_num) {
+    while (output.size() < total_solution_num) {
         population = generate_population(population);
 
-        solution = find_solution(population);
-        if (solution) {
-            auto same = std::find(solutions.begin(), solutions.end(), *solution);
-            if (same != solutions.end()) {
-                continue;
+        solutions = find_solutions(population);
+        for (const auto &solution: solutions) {
+            auto same = std::find(output.begin(), output.end(), solution);
+            if (same == output.end()) {
+                std::cout << "Solution found in generation " << generation << std::endl;
+                output.push_back(solution);
             }
-            std::cout << "Solution found in generation " << generation << std::endl;
-            solutions.push_back(*solution);
         }
 
         generation++;
     }
 
-    for (const auto &solution: solutions) {
+    for (const auto &solution: output) {
         std::cout << "Genes: ";
         solution.show_genes();
         std::cout << "Chessboard:" << std::endl;
