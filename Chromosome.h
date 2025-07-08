@@ -2,7 +2,7 @@
 #define PARALLEL_GA_CHROMOSOME_H
 
 
-class Chromosome {
+struct Chromosome {
 private:
     std::vector<int> genes;
     int gene_len;
