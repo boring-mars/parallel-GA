@@ -5,4 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(parallel_ga main.cpp
         Chromosome.h
-        Chromosome.cpp)
+        Chromosome.cpp
+        runner/Runner.h
+        runner/Runner.cpp
+        runner/SerialRunner.h
+        runner/SerialRunner.cpp)

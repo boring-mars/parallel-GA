@@ -1,6 +1,7 @@
 #ifndef PARALLEL_GA_CHROMOSOME_H
 #define PARALLEL_GA_CHROMOSOME_H
 
+#include <vector>
 
 struct Chromosome {
 private:
@@ -29,7 +30,7 @@ public:
 
     void show_chessboard() const;
 
-    bool operator==(const Chromosome& other) const;
+    bool operator==(const Chromosome &other) const;
 };
 
 

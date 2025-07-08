@@ -1,0 +1,103 @@
+#include <random>
+#include <iostream>
+#include <vector>
+#include "SerialRunner.h"
+
+std::mt19937 SerialRunner::generator = std::mt19937(std::random_device{}());
+
+Chromosome SerialRunner::pick_parent(const std::vector<Chromosome> &population) {
+    // Randomly select a parent from the population
+    std::vector<double> possibilities(population_size);
+
+    for (int i = 0; i < population_size; ++i) {
+        possibilities.at(i) = population.at(i).get_fitness() / double(max_fitness);
+    }
+
+    double total = std::accumulate(possibilities.begin(), possibilities.end(), 0.0);
+    std::uniform_real_distribution<> distribution(0, total);
+    double pick_point = distribution(generator);
+
+    double accumulator = 0;
+    for (int i = 0; i < population_size; ++i) {
+        accumulator += possibilities.at(i);
+        if (accumulator >= pick_point) {
+            return population.at(i);
+        }
+    }
+
+    throw std::runtime_error("No parent found, this should not happen.");
+}
+
+std::vector<Chromosome> SerialRunner::generate_population(std::vector<Chromosome> &population) {
+    std::vector<Chromosome> new_population;
+
+    for (int i = 0; i < population_size; ++i) {
+        Chromosome x = pick_parent(population);
+        Chromosome y = pick_parent(population);
+        Chromosome child = x.cross_over(y);
+
+        static std::uniform_real_distribution<> distribution(0, 1);
+
+        if (distribution(generator) < mutation_rate) {
+            child.mutate();
+        }
+
+        new_population.push_back(child);
+    }
+
+    return new_population;
+}
+
+std::vector<Chromosome> SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
+    std::vector<Chromosome> solutions;
+    for (const auto &chromosome: population) {
+        if (chromosome.get_fitness() == max_fitness) {
+            solutions.push_back(chromosome);
+        }
+    }
+
+    return solutions;
+}
+
+void SerialRunner::run() {
+    std::vector<Chromosome> population;
+    for (int i = 0; i < population_size; ++i) {
+        Chromosome chromosome(gene_length);
+        population.push_back(chromosome);
+    }
+
+    std::vector<Chromosome> output;
+    std::vector<Chromosome> solutions = find_solutions(population);
+    for (const auto &solution: solutions) {
+        auto same = std::find(output.begin(), output.end(), solution);
+        if (same == output.end()) {
+            std::cout << "Solution found in generation " << generation << std::endl;
+            output.push_back(solution);
+        }
+    }
+
+    while (output.size() < total_solution_num) {
+        population = generate_population(population);
+
+        solutions = find_solutions(population);
+        for (const auto &solution: solutions) {
+            auto same = std::find(output.begin(), output.end(), solution);
+            if (same == output.end()) {
+                std::cout << "Solution found in generation " << generation << std::endl;
+                output.push_back(solution);
+            }
+        }
+
+        generation++;
+    }
+
+    for (const auto &solution: output) {
+        std::cout << "Genes: ";
+        solution.show_genes();
+        std::cout << "Chessboard:" << std::endl;
+        solution.show_chessboard();
+    }
+}
+
+
+
