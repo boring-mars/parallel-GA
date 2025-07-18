@@ -9,4 +9,9 @@ add_executable(parallel_ga main.cpp
         runner/Runner.h
         runner/Runner.cpp
         runner/SerialRunner.h
-        runner/SerialRunner.cpp)
+        runner/SerialRunner.cpp
+        runner/OpenMPRunner.h
+        runner/OpenMPRunner.cpp)
+
+find_package(OpenMP REQUIRED)
+target_link_libraries(parallel_ga PRIVATE OpenMP::OpenMP_CXX)

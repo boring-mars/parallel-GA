@@ -2,11 +2,12 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "SerialRunner.h"
+#include <omp.h>
+#include "OpenMPRunner.h"
 
-std::mt19937 SerialRunner::generator = std::mt19937(std::random_device{}());
+std::mt19937 OpenMPRunner::generator = std::mt19937(std::random_device{}());
 
-Chromosome SerialRunner::pick_parent(const std::vector<Chromosome> &population) {
+Chromosome OpenMPRunner::pick_parent(const std::vector<Chromosome> &population) {
     // Randomly select a parent from the population
     std::vector<double> possibilities(population_size);
 
@@ -29,9 +30,10 @@ Chromosome SerialRunner::pick_parent(const std::vector<Chromosome> &population) 
     throw std::runtime_error("No parent found, this should not happen.");
 }
 
-std::vector<Chromosome> SerialRunner::generate_population(std::vector<Chromosome> &population) {
-    std::vector<Chromosome> new_population;
+std::vector<Chromosome> OpenMPRunner::generate_population(std::vector<Chromosome> &population) {
+    std::vector<Chromosome> new_population(population_size);
 
+#pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         Chromosome x = pick_parent(population);
         Chromosome y = pick_parent(population);
@@ -43,44 +45,45 @@ std::vector<Chromosome> SerialRunner::generate_population(std::vector<Chromosome
             child.mutate();
         }
 
-        new_population.push_back(child);
+        new_population.at(i) = child;
     }
 
     return new_population;
 }
 
-std::vector<Chromosome> SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
+std::vector<Chromosome> OpenMPRunner::find_solutions(const std::vector<Chromosome> &population) {
     std::vector<Chromosome> solutions;
-    for (const auto &chromosome: population) {
-        if (chromosome.get_fitness() == max_fitness) {
-            solutions.push_back(chromosome);
+
+#pragma omp parallel for schedule(static)
+    for (int i = 0; i < population_size; ++i) {
+        if (population.at(i).get_fitness() == max_fitness) {
+#pragma omp critical
+            solutions.push_back(population.at(i));
         }
     }
 
     return solutions;
 }
 
-void SerialRunner::run() {
-    std::vector<Chromosome> population;
+void OpenMPRunner::run() {
+#pragma omp parallel
+    {
+#pragma omp single
+        std::cout << "Using " << omp_get_num_threads() << " OpenMP threads" << std::endl;
+    }
+
+    std::vector<Chromosome> population(population_size);
+
+#pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         Chromosome chromosome(gene_length);
-        population.push_back(chromosome);
+        population.at(i) = chromosome;
     }
 
     std::vector<Chromosome> output;
-    std::vector<Chromosome> solutions = find_solutions(population);
-    for (const auto &solution: solutions) {
-        auto same = std::find(output.begin(), output.end(), solution);
-        if (same == output.end()) {
-            std::cout << "Solution found in generation " << generation << std::endl;
-            output.push_back(solution);
-        }
-    }
 
-    while (output.size() < total_solution_num) {
-        population = generate_population(population);
-
-        solutions = find_solutions(population);
+    while (true) {
+        std::vector<Chromosome> solutions = find_solutions(population);
         for (const auto &solution: solutions) {
             auto same = std::find(output.begin(), output.end(), solution);
             if (same == output.end()) {
@@ -89,16 +92,18 @@ void SerialRunner::run() {
             }
         }
 
+        if (output.size() >= total_solution_num) {
+            break;
+        }
+
+        population = generate_population(population);
         generation++;
     }
 
-    for (const auto &solution: output) {
-        std::cout << "Genes: ";
-        solution.show_genes();
-        std::cout << "Chessboard:" << std::endl;
-        solution.show_chessboard();
-    }
+//    for (const auto &solution: output) {
+//        std::cout << "Genes: ";
+//        solution.show_genes();
+//        std::cout << "Chessboard:" << std::endl;
+//        solution.show_chessboard();
+//    }
 }
-
-
-

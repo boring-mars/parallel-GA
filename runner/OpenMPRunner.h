@@ -1,11 +1,11 @@
-#ifndef PARALLEL_GA_SERIALRUNNER_H
-#define PARALLEL_GA_SERIALRUNNER_H
+#ifndef PARALLEL_GA_OPENMPRUNNER_H
+#define PARALLEL_GA_OPENMPRUNNER_H
 
 #include <vector>
 #include <random>
 #include "Runner.h"
 
-class SerialRunner : Runner {
+class OpenMPRunner : Runner {
 
 private:
     static std::mt19937 generator;
@@ -18,10 +18,11 @@ protected:
     std::vector<Chromosome> find_solutions(const std::vector<Chromosome> &population) override;
 
 public:
-    SerialRunner() : Runner() {};
+    OpenMPRunner() : Runner() {};
 
     void run() override;
+
 };
 
 
-#endif //PARALLEL_GA_SERIALRUNNER_H
+#endif //PARALLEL_GA_OPENMPRUNNER_H

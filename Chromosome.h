@@ -9,13 +9,16 @@ private:
     int gene_len;
     int fitness;
 
-    Chromosome();
+    //TODO: return it private
+//    Chromosome();
 
     static int get_random_num(int gene_len);
 
     void cal_fitness();
 
 public:
+    Chromosome();
+
     explicit Chromosome(int gene_len);
 
     int get_fitness() const {
