@@ -49,15 +49,12 @@ std::vector<Chromosome> SerialRunner::generate_population(std::vector<Chromosome
     return new_population;
 }
 
-std::vector<Chromosome> SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
-    std::vector<Chromosome> solutions;
+void SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
     for (const auto &chromosome: population) {
         if (chromosome.get_fitness() == max_fitness) {
-            solutions.push_back(chromosome);
+            solutions.insert(chromosome);
         }
     }
-
-    return solutions;
 }
 
 void SerialRunner::run() {
@@ -67,38 +64,22 @@ void SerialRunner::run() {
         population.push_back(chromosome);
     }
 
-    std::vector<Chromosome> output;
-    std::vector<Chromosome> solutions = find_solutions(population);
-    for (const auto &solution: solutions) {
-        auto same = std::find(output.begin(), output.end(), solution);
-        if (same == output.end()) {
-            std::cout << "Solution found in generation " << generation << std::endl;
-            output.push_back(solution);
-        }
-    }
+    while (true) {
+        find_solutions(population);
 
-    while (output.size() < total_solution_num) {
+        if (solutions.size() >= total_solution_num) {
+            break;
+        }
+
         population = generate_population(population);
-
-        solutions = find_solutions(population);
-        for (const auto &solution: solutions) {
-            auto same = std::find(output.begin(), output.end(), solution);
-            if (same == output.end()) {
-                std::cout << "Solution found in generation " << generation << std::endl;
-                output.push_back(solution);
-            }
-        }
-
         generation++;
     }
 
-    for (const auto &solution: output) {
+    for (const auto &solution: solutions) {
         std::cout << "Genes: ";
         solution.show_genes();
         std::cout << "Chessboard:" << std::endl;
         solution.show_chessboard();
     }
+    std::cout << "Generation: " << generation << std::endl;
 }
-
-
-

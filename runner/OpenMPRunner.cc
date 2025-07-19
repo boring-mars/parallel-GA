@@ -51,18 +51,14 @@ std::vector<Chromosome> OpenMPRunner::generate_population(std::vector<Chromosome
     return new_population;
 }
 
-std::vector<Chromosome> OpenMPRunner::find_solutions(const std::vector<Chromosome> &population) {
-    std::vector<Chromosome> solutions;
-
+void OpenMPRunner::find_solutions(const std::vector<Chromosome> &population) {
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         if (population.at(i).get_fitness() == max_fitness) {
 #pragma omp critical
-            solutions.push_back(population.at(i));
+            solutions.insert(population.at(i));
         }
     }
-
-    return solutions;
 }
 
 void OpenMPRunner::run() {
@@ -80,19 +76,10 @@ void OpenMPRunner::run() {
         population.at(i) = chromosome;
     }
 
-    std::vector<Chromosome> output;
-
     while (true) {
-        std::vector<Chromosome> solutions = find_solutions(population);
-        for (const auto &solution: solutions) {
-            auto same = std::find(output.begin(), output.end(), solution);
-            if (same == output.end()) {
-                std::cout << "Solution found in generation " << generation << std::endl;
-                output.push_back(solution);
-            }
-        }
+        find_solutions(population);
 
-        if (output.size() >= total_solution_num) {
+        if (solutions.size() >= total_solution_num) {
             break;
         }
 
@@ -100,10 +87,11 @@ void OpenMPRunner::run() {
         generation++;
     }
 
-//    for (const auto &solution: output) {
-//        std::cout << "Genes: ";
-//        solution.show_genes();
-//        std::cout << "Chessboard:" << std::endl;
-//        solution.show_chessboard();
-//    }
+    for (const auto &solution: solutions) {
+        std::cout << "Genes: ";
+        solution.show_genes();
+        std::cout << "Chessboard:" << std::endl;
+        solution.show_chessboard();
+    }
+    std::cout << "Generation: " << generation << std::endl;
 }

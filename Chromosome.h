@@ -9,6 +9,8 @@ private:
     int gene_len;
     int fitness;
 
+    friend struct std::hash<Chromosome>;
+
     //TODO: return it private
 //    Chromosome();
 
@@ -36,5 +38,17 @@ public:
     bool operator==(const Chromosome &other) const;
 };
 
+namespace std {
+    template<>
+    struct hash<Chromosome> {
+        std::size_t operator()(const Chromosome &c) const {
+            std::size_t seed = c.genes.size();
+            for (int gene: c.genes) {
+                seed ^= std::hash<int>()(gene) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            }
+            return seed;
+        }
+    };
+}
 
 #endif //PARALLEL_GA_CHROMOSOME_H

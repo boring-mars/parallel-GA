@@ -20,7 +20,7 @@ protected:
 
     virtual std::vector<Chromosome> generate_population(std::vector<Chromosome> &population) = 0;
 
-    virtual std::vector<Chromosome> find_solutions(const std::vector<Chromosome> &population) = 0;
+    virtual void find_solutions(const std::vector<Chromosome> &population) = 0;
 
 public:
 
