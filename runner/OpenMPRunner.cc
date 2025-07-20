@@ -31,7 +31,7 @@ Chromosome OpenMPRunner::pick_parent(const std::vector<Chromosome> &population) 
 }
 
 std::vector<Chromosome> OpenMPRunner::generate_population(std::vector<Chromosome> &population) {
-    std::vector<Chromosome> new_population(population_size);
+    std::vector<Chromosome> new_population;
 
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
@@ -45,7 +45,8 @@ std::vector<Chromosome> OpenMPRunner::generate_population(std::vector<Chromosome
             child.mutate();
         }
 
-        new_population.at(i) = child;
+#pragma omp critical
+        new_population.push_back(child);
     }
 
     return new_population;
@@ -68,12 +69,13 @@ void OpenMPRunner::run() {
         std::cout << "Using " << omp_get_num_threads() << " OpenMP threads" << std::endl;
     }
 
-    std::vector<Chromosome> population(population_size);
+    std::vector<Chromosome> population;
 
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         Chromosome chromosome(gene_length);
-        population.at(i) = chromosome;
+#pragma omp critical
+        population.push_back(chromosome);
     }
 
     while (true) {
