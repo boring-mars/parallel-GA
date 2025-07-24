@@ -26,6 +26,9 @@ public:
 
     virtual void run() = 0;
 
+    virtual void show_running_info() = 0;
+
+    virtual void show_solutions() = 0;
 };
 
 #endif //PARALLEL_GA_RUNNER_H

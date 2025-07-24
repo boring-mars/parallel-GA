@@ -63,11 +63,7 @@ void OpenMPRunner::find_solutions(const std::vector<Chromosome> &population) {
 }
 
 void OpenMPRunner::run() {
-#pragma omp parallel
-    {
-#pragma omp single
-        std::cout << "Using " << omp_get_num_threads() << " OpenMP threads" << std::endl;
-    }
+    double start = omp_get_wtime();
 
     std::vector<Chromosome> population;
 
@@ -89,6 +85,28 @@ void OpenMPRunner::run() {
         generation++;
     }
 
+    double end = omp_get_wtime();
+    running_time = static_cast<long long>((end - start) * 1000);
+}
+
+void OpenMPRunner::show_running_info() {
+#pragma omp parallel
+    {
+#pragma omp single
+        std::cout << "Using " << omp_get_num_threads() << " OpenMP threads" << std::endl;
+    }
+
+    std::cout << "Running with " << population_size << " chromosomes, "
+              << "gene length: " << gene_length << ", "
+              << "max fitness: " << max_fitness << ", "
+              << "mutation rate: " << mutation_rate << std::endl;
+    std::cout << "Total generations: " << generation << std::endl;
+    std::cout << "Total solutions found: " << solutions.size() << std::endl;
+    std::cout << "Running time: " << running_time << " ms" << std::endl;
+    std::cout << "Running rate: " << static_cast<double> (running_time) / generation << " ms/generation" << std::endl;
+}
+
+void OpenMPRunner::show_solutions() {
     for (const auto &solution: solutions) {
         std::cout << "Genes: ";
         solution.show_genes();
@@ -96,4 +114,5 @@ void OpenMPRunner::run() {
         solution.show_chessboard();
     }
     std::cout << "Generation: " << generation << std::endl;
+
 }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 #include "SerialRunner.h"
 
 std::mt19937 SerialRunner::generator = std::mt19937(std::random_device{}());
@@ -58,6 +59,8 @@ void SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
 }
 
 void SerialRunner::run() {
+    auto start = std::chrono::high_resolution_clock::now();
+
     std::vector<Chromosome> population;
     for (int i = 0; i < population_size; ++i) {
         Chromosome chromosome(gene_length);
@@ -75,6 +78,22 @@ void SerialRunner::run() {
         generation++;
     }
 
+    auto end = std::chrono::high_resolution_clock::now();
+    running_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+}
+
+void SerialRunner::show_running_info() {
+    std::cout << "Running with " << population_size << " chromosomes, "
+              << "gene length: " << gene_length << ", "
+              << "max fitness: " << max_fitness << ", "
+              << "mutation rate: " << mutation_rate << std::endl;
+    std::cout << "Total generations: " << generation << std::endl;
+    std::cout << "Total solutions found: " << solutions.size() << std::endl;
+    std::cout << "Running time: " << running_time << " ms" << std::endl;
+    std::cout << "Running rate: " << static_cast<double> (running_time) / generation << " ms/generation" << std::endl;
+}
+
+void SerialRunner::show_solutions() {
     for (const auto &solution: solutions) {
         std::cout << "Genes: ";
         solution.show_genes();

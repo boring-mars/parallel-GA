@@ -11,6 +11,7 @@ class OpenMPRunner : Runner {
 private:
     static std::mt19937 generator;
     std::unordered_set<Chromosome> solutions;
+    long long running_time;
 
 protected:
     Chromosome pick_parent(const std::vector<Chromosome> &population) override;
@@ -23,6 +24,10 @@ public:
     OpenMPRunner() : Runner() {};
 
     void run() override;
+
+    void show_running_info() override;
+
+    void show_solutions() override;
 };
 
 
