@@ -2,7 +2,7 @@
 #define PARALLEL_GA_RUNNER_H
 
 #include <vector>
-#include "../Chromosome.h"
+#include "../model/Chromosome.h"
 
 class Runner {
 
