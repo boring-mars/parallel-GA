@@ -1,37 +1,37 @@
 #include <random>
 #include <iostream>
-#include <vector>
 #include <algorithm>
 #include <omp.h>
 #include "OpenMPRunner.h"
 
 std::mt19937 OpenMPRunner::generator = std::mt19937(std::random_device{}());
 
-Chromosome OpenMPRunner::pick_parent(const std::vector<Chromosome> &population) {
+Chromosome OpenMPRunner::pick_parent(const Chromosome population[]) {
     // Randomly select a parent from the population
-    std::vector<double> possibilities(population_size);
+    auto *possibilities = new double[population_size];
 
     for (int i = 0; i < population_size; ++i) {
-        possibilities.at(i) = population.at(i).get_fitness() / double(max_fitness);
+        possibilities[i] = population[i].get_fitness() / double(max_fitness);
     }
 
-    double total = std::accumulate(possibilities.begin(), possibilities.end(), 0.0);
+    double total = std::accumulate(possibilities, possibilities + population_size, 0.0);
     std::uniform_real_distribution<> distribution(0, total);
     double pick_point = distribution(generator);
 
     double accumulator = 0;
     for (int i = 0; i < population_size; ++i) {
-        accumulator += possibilities.at(i);
+        accumulator += possibilities[i];
         if (accumulator >= pick_point) {
-            return population.at(i);
+            delete[] possibilities;
+            return population[i];
         }
     }
 
     throw std::runtime_error("No parent found, this should not happen.");
 }
 
-std::vector<Chromosome> OpenMPRunner::generate_population(std::vector<Chromosome> &population) {
-    std::vector<Chromosome> new_population;
+Chromosome *OpenMPRunner::generate_population(const Chromosome population[]) {
+    auto *new_population = new Chromosome[population_size];
 
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
@@ -45,19 +45,19 @@ std::vector<Chromosome> OpenMPRunner::generate_population(std::vector<Chromosome
             child.mutate();
         }
 
-#pragma omp critical
-        new_population.push_back(child);
+        new_population[i] = child;
     }
 
+    delete[] population;
     return new_population;
 }
 
-void OpenMPRunner::find_solutions(const std::vector<Chromosome> &population) {
+void OpenMPRunner::find_solutions(const Chromosome population[]) {
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
-        if (population.at(i).get_fitness() == max_fitness) {
+        if (population[i].get_fitness() == max_fitness) {
 #pragma omp critical
-            solutions.insert(population.at(i));
+            solutions.insert(population[i]);
         }
     }
 }
@@ -65,13 +65,12 @@ void OpenMPRunner::find_solutions(const std::vector<Chromosome> &population) {
 void OpenMPRunner::run() {
     double start = omp_get_wtime();
 
-    std::vector<Chromosome> population;
+    auto *population = new Chromosome[population_size];
 
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         Chromosome chromosome(gene_length);
-#pragma omp critical
-        population.push_back(chromosome);
+        population[i] = chromosome;
     }
 
     while (true) {

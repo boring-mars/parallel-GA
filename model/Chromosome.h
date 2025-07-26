@@ -11,13 +11,13 @@ private:
 
     friend struct std::hash<Chromosome>;
 
-    Chromosome();
-
     static int get_random_num(int gene_len);
 
     void cal_fitness();
 
 public:
+    Chromosome();
+
     explicit Chromosome(int gene_len);
 
     Chromosome(const Chromosome &other);

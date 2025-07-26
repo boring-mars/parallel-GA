@@ -16,11 +16,11 @@ protected:
 
     Runner();
 
-    virtual Chromosome pick_parent(const std::vector<Chromosome> &population) = 0;
+    virtual Chromosome pick_parent(const Chromosome population[]) = 0;
 
-    virtual std::vector<Chromosome> generate_population(std::vector<Chromosome> &population) = 0;
+    virtual Chromosome* generate_population(const Chromosome population[]) = 0;
 
-    virtual void find_solutions(const std::vector<Chromosome> &population) = 0;
+    virtual void find_solutions(const Chromosome population[]) = 0;
 
 public:
 

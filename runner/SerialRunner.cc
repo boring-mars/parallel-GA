@@ -1,37 +1,37 @@
 #include <random>
 #include <iostream>
-#include <vector>
 #include <algorithm>
 #include <chrono>
 #include "SerialRunner.h"
 
 std::mt19937 SerialRunner::generator = std::mt19937(std::random_device{}());
 
-Chromosome SerialRunner::pick_parent(const std::vector<Chromosome> &population) {
+Chromosome SerialRunner::pick_parent(const Chromosome population[]) {
     // Randomly select a parent from the population
-    std::vector<double> possibilities(population_size);
+    auto *possibilities = new double[population_size];
 
     for (int i = 0; i < population_size; ++i) {
-        possibilities.at(i) = population.at(i).get_fitness() / double(max_fitness);
+        possibilities[i] = population[i].get_fitness() / double(max_fitness);
     }
 
-    double total = std::accumulate(possibilities.begin(), possibilities.end(), 0.0);
+    double total = std::accumulate(possibilities, possibilities + population_size, 0.0);
     std::uniform_real_distribution<> distribution(0, total);
     double pick_point = distribution(generator);
 
     double accumulator = 0;
     for (int i = 0; i < population_size; ++i) {
-        accumulator += possibilities.at(i);
+        accumulator += possibilities[i];
         if (accumulator >= pick_point) {
-            return population.at(i);
+            delete[] possibilities;
+            return population[i];
         }
     }
 
     throw std::runtime_error("No parent found, this should not happen.");
 }
 
-std::vector<Chromosome> SerialRunner::generate_population(std::vector<Chromosome> &population) {
-    std::vector<Chromosome> new_population;
+Chromosome *SerialRunner::generate_population(const Chromosome population[]) {
+    auto *new_population = new Chromosome[population_size];
 
     for (int i = 0; i < population_size; ++i) {
         Chromosome x = pick_parent(population);
@@ -44,16 +44,17 @@ std::vector<Chromosome> SerialRunner::generate_population(std::vector<Chromosome
             child.mutate();
         }
 
-        new_population.push_back(child);
+        new_population[i] = child;
     }
 
+    delete[] population;
     return new_population;
 }
 
-void SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
-    for (const auto &chromosome: population) {
-        if (chromosome.get_fitness() == max_fitness) {
-            solutions.insert(chromosome);
+void SerialRunner::find_solutions(const Chromosome population[]) {
+    for (int i = 0; i < population_size; ++i) {
+        if (population[i].get_fitness() == max_fitness) {
+            solutions.insert(population[i]);
         }
     }
 }
@@ -61,10 +62,10 @@ void SerialRunner::find_solutions(const std::vector<Chromosome> &population) {
 void SerialRunner::run() {
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::vector<Chromosome> population;
+    auto *population = new Chromosome[population_size];
     for (int i = 0; i < population_size; ++i) {
         Chromosome chromosome(gene_length);
-        population.push_back(chromosome);
+        population[i] = chromosome;
     }
 
     while (true) {
