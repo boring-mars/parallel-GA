@@ -5,7 +5,7 @@
 
 
 Chromosome::Chromosome() {
-
+    genes = nullptr;
 }
 
 Chromosome::~Chromosome() {
@@ -120,7 +120,9 @@ bool Chromosome::operator==(const Chromosome &other) const {
 }
 
 Chromosome &Chromosome::operator=(const Chromosome &other) {
-    if (this == &other) return *this;
+    if (this == &other) {
+        return *this;
+    }
 
     delete[] genes;
 
