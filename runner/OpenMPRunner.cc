@@ -4,8 +4,6 @@
 #include <omp.h>
 #include "OpenMPRunner.h"
 
-std::mt19937 OpenMPRunner::generator = std::mt19937(std::random_device{}());
-
 Chromosome OpenMPRunner::pick_parent(const Chromosome population[]) {
     // Randomly select a parent from the population
     auto *possibilities = new double[population_size];
@@ -14,6 +12,7 @@ Chromosome OpenMPRunner::pick_parent(const Chromosome population[]) {
         possibilities[i] = population[i].get_fitness() / double(max_fitness);
     }
 
+    thread_local static std::mt19937 generator = std::mt19937(std::random_device{}());
     double total = std::accumulate(possibilities, possibilities + population_size, 0.0);
     std::uniform_real_distribution<> distribution(0, total);
     double pick_point = distribution(generator);
@@ -39,7 +38,8 @@ Chromosome *OpenMPRunner::generate_population(const Chromosome population[]) {
         Chromosome y = pick_parent(population);
         Chromosome child = x.cross_over(y);
 
-        static std::uniform_real_distribution<> distribution(0, 1);
+        thread_local static std::mt19937 generator = std::mt19937(std::random_device{}());
+        thread_local static std::uniform_real_distribution<> distribution(0, 1);
 
         if (distribution(generator) < mutation_rate) {
             child.mutate();

@@ -9,7 +9,6 @@
 class SerialRunner : Runner {
 
 private:
-    static std::mt19937 generator;
     std::unordered_set<Chromosome> solutions;
     long long running_time;
 
