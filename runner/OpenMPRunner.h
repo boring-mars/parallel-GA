@@ -6,13 +6,12 @@
 #include <random>
 #include "Runner.h"
 
-class OpenMPRunner : Runner {
+class OpenMPRunner : public virtual Runner {
 
-private:
+protected:
     std::unordered_set<Chromosome> solutions;
     long long running_time;
 
-protected:
     Chromosome pick_parent(const Chromosome population[]) override;
 
     Chromosome* generate_population(const Chromosome population[]) override;
