@@ -17,7 +17,7 @@ protected:
 
     Runner();
 
-    virtual Chromosome pick_parent(const Chromosome population[]) = 0;
+    virtual Chromosome pick_parent(const Chromosome population[]) const = 0;
 
     virtual Chromosome* generate_population(const Chromosome population[]) = 0;
 

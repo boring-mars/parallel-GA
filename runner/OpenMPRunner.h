@@ -12,9 +12,9 @@ protected:
     std::unordered_set<Chromosome> solutions;
     long long running_time;
 
-    Chromosome pick_parent(const Chromosome population[]) override;
+    Chromosome pick_parent(const Chromosome population[]) const override;
 
-    Chromosome* generate_population(const Chromosome population[]) override;
+    Chromosome *generate_population(const Chromosome population[]) override;
 
     void find_solutions(const Chromosome population[]) override;
 

@@ -30,8 +30,8 @@ Chromosome::Chromosome(const Chromosome &other) {
 }
 
 int Chromosome::get_random_num(int gene_len) {
-    static std::mt19937 generator = std::mt19937(std::random_device{}());
-    static std::uniform_int_distribution<> distribution(1, gene_len);
+    thread_local static std::mt19937 generator = std::mt19937(std::random_device{}());
+    thread_local static std::uniform_int_distribution<> distribution(1, gene_len);
 
     return distribution(generator);
 }

@@ -1,27 +1,24 @@
 #include <random>
 #include <iostream>
-#include <algorithm>
 #include <chrono>
 #include "SerialRunner.h"
 
-Chromosome SerialRunner::pick_parent(const Chromosome population[]) {
+Chromosome SerialRunner::pick_parent(const Chromosome population[]) const {
     // Randomly select a parent from the population
-    auto *possibilities = new double[population_size];
+    int total = 0;
 
     for (int i = 0; i < population_size; ++i) {
-        possibilities[i] = population[i].get_fitness() / double(max_fitness);
+        total += population[i].get_fitness();
     }
 
-    static std::mt19937 generator = std::mt19937(std::random_device{}());
-    double total = std::accumulate(possibilities, possibilities + population_size, 0.0);
-    std::uniform_real_distribution<> distribution(0, total);
-    double pick_point = distribution(generator);
+    thread_local static std::mt19937 generator = std::mt19937(std::random_device{}());
+    std::uniform_int_distribution<> distribution(0, total);
+    int pick_point = distribution(generator);
 
-    double accumulator = 0;
+    int accumulator = 0;
     for (int i = 0; i < population_size; ++i) {
-        accumulator += possibilities[i];
+        accumulator += population[i].get_fitness();
         if (accumulator >= pick_point) {
-            delete[] possibilities;
             return population[i];
         }
     }
