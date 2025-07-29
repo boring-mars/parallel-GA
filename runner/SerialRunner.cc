@@ -68,7 +68,7 @@ void SerialRunner::run() {
         population[i] = chromosome;
     }
 
-    while (true) {
+    while (generation < max_generation) {
         find_solutions(population);
 
         if (solutions.size() >= total_solution_num) {

@@ -8,6 +8,7 @@ class Runner {
 
 protected:
     int generation;
+    int max_generation;
     int gene_length;
     int max_fitness;
     double mutation_rate;

@@ -3,6 +3,7 @@
 
 Runner::Runner() {
     generation = 0;
+    max_generation = RunningConfig::max_generation;
     gene_length = RunningConfig::gene_length;
     max_fitness = gene_length * (gene_length - 1) / 2;
     mutation_rate = RunningConfig::mutation_rate;
