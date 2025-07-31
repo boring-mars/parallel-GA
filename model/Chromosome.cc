@@ -3,30 +3,12 @@
 #include <iostream>
 #include "Chromosome.h"
 
-
-Chromosome::Chromosome() {
-    genes = nullptr;
-}
-
-Chromosome::~Chromosome() {
-    delete[] genes;
-}
-
 Chromosome::Chromosome(int gene_len) {
-    genes = new int[gene_len];
     for (int i = 0; i < gene_len; ++i) {
         genes[i] = get_random_num(gene_len);
     }
 
-    this->gene_len = gene_len;
     cal_fitness();
-}
-
-Chromosome::Chromosome(const Chromosome &other) {
-    gene_len = other.gene_len;
-    genes = new int[gene_len];
-    std::copy(other.genes, other.genes + gene_len, genes);
-    fitness = other.fitness;
 }
 
 int Chromosome::get_random_num(int gene_len) {
@@ -67,16 +49,12 @@ void Chromosome::cal_fitness() {
 }
 
 Chromosome Chromosome::cross_over(const Chromosome &other) const {
-    int *new_genes = new int[gene_len];
+    Chromosome child;
 
     int cross_over_point = get_random_num(gene_len) - 1;
+    std::copy(genes, genes + cross_over_point, child.genes);
+    std::copy(other.genes + cross_over_point, other.genes + gene_len, child.genes + cross_over_point);
 
-    std::copy(genes, genes + cross_over_point, new_genes);
-    std::copy(other.genes + cross_over_point, other.genes + gene_len, new_genes + cross_over_point);
-
-    Chromosome child;
-    child.genes = new_genes;
-    child.gene_len = gene_len;
     child.cal_fitness();
 
     return child;
@@ -117,19 +95,4 @@ void Chromosome::show_chessboard() const {
 
 bool Chromosome::operator==(const Chromosome &other) const {
     return std::equal(genes, genes + gene_len, other.genes);
-}
-
-Chromosome &Chromosome::operator=(const Chromosome &other) {
-    if (this == &other) {
-        return *this;
-    }
-
-    delete[] genes;
-
-    gene_len = other.gene_len;
-    genes = new int[gene_len];
-    std::copy(other.genes, other.genes + gene_len, genes);
-    fitness = other.fitness;
-
-    return *this;
 }

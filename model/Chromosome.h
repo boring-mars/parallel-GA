@@ -2,11 +2,12 @@
 #define PARALLEL_GA_CHROMOSOME_H
 
 #include <vector>
+#include "../RunningConfig.h"
 
 struct Chromosome {
 private:
-    int *genes;
-    int gene_len;
+    int genes[RunningConfig::gene_length];
+    int gene_len = RunningConfig::gene_length;
     int fitness;
 
     friend struct std::hash<Chromosome>;
@@ -16,13 +17,9 @@ private:
     void cal_fitness();
 
 public:
-    Chromosome();
+    Chromosome() = default;
 
     explicit Chromosome(int gene_len);
-
-    Chromosome(const Chromosome &other);
-
-    ~Chromosome();
 
     int get_fitness() const {
         return fitness;
@@ -37,8 +34,6 @@ public:
     void show_chessboard() const;
 
     bool operator==(const Chromosome &other) const;
-
-    Chromosome &operator=(const Chromosome &other);
 };
 
 namespace std {
