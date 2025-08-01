@@ -1,9 +1,10 @@
+#include <random>
 #include "OpenMPCellularRunner.h"
 
 Chromosome *OpenMPCellularRunner::generate_population(const Chromosome population[]) {
     auto *new_population = new Chromosome[population_size];
 
-#pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         int row = i / cellular_col_size;
         int col = i % cellular_col_size;

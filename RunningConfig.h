@@ -4,7 +4,8 @@
 class RunningConfig {
 public:
     static constexpr int gene_length = 8;
-    static constexpr int max_generation = 1000000;
+    static constexpr int max_generation = 100000;
+    static constexpr int sync_generation = 10000;
     static constexpr int population_size = 100;
     static constexpr int cellular_row_size = 10;
     static constexpr int cellular_col_size = population_size / cellular_row_size;

@@ -1,17 +1,11 @@
 #ifndef PARALLEL_GA_SERIALRUNNER_H
 #define PARALLEL_GA_SERIALRUNNER_H
 
-#include <vector>
-#include <unordered_set>
-#include <random>
 #include "Runner.h"
 
 class SerialRunner : public virtual Runner {
 
 protected:
-    std::unordered_set<Chromosome> solutions;
-    long long running_time;
-
     Chromosome pick_parent(const Chromosome population[]) const override;
 
     Chromosome *generate_population(const Chromosome population[]) override;

@@ -1,7 +1,6 @@
 #ifndef PARALLEL_GA_SERIALCELLULARRUNNER_H
 #define PARALLEL_GA_SERIALCELLULARRUNNER_H
 
-#include <unordered_set>
 #include "SerialRunner.h"
 #include "CellularRunner.h"
 
@@ -12,7 +11,6 @@ protected:
 
 public:
     SerialCellularRunner() : Runner(), CellularRunner(), SerialRunner() {};
-
 };
 
 

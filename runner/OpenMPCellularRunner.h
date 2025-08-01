@@ -1,7 +1,6 @@
 #ifndef PARALLEL_GA_OPENMPCELLULARRUNNER_H
 #define PARALLEL_GA_OPENMPCELLULARRUNNER_H
 
-
 #include "OpenMPRunner.h"
 #include "CellularRunner.h"
 
@@ -12,7 +11,6 @@ protected:
 
 public:
     OpenMPCellularRunner() : Runner(), CellularRunner(), OpenMPRunner() {};
-
 };
 
 

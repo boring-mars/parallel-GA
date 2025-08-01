@@ -1,12 +1,11 @@
 #include <random>
 #include <iostream>
-#include <algorithm>
 #include "CellularRunner.h"
-#include "../RunningConfig.h"
 
-CellularRunner::CellularRunner() : Runner() {
-    cellular_row_size = RunningConfig::cellular_row_size;
-    cellular_col_size = RunningConfig::cellular_col_size;
+CellularRunner::CellularRunner()
+        : cellular_row_size(RunningConfig::cellular_row_size),
+          cellular_col_size(RunningConfig::cellular_col_size) {
+    // TODO: Automatically calculate cellular_row_size and cellular_col_size based on population_size
 }
 
 Chromosome CellularRunner::pick_parent_from_neighbors(const Chromosome population[], int row, int col) const {

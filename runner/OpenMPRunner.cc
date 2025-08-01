@@ -29,7 +29,7 @@ Chromosome OpenMPRunner::pick_parent(const Chromosome population[]) const {
 Chromosome *OpenMPRunner::generate_population(const Chromosome population[]) {
     auto *new_population = new Chromosome[population_size];
 
-#pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         Chromosome x = pick_parent(population);
         Chromosome y = pick_parent(population);
@@ -50,10 +50,10 @@ Chromosome *OpenMPRunner::generate_population(const Chromosome population[]) {
 }
 
 void OpenMPRunner::find_solutions(const Chromosome population[]) {
-#pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         if (population[i].get_fitness() == max_fitness) {
-#pragma omp critical
+            #pragma omp critical
             solutions.insert(population[i]);
         }
     }
@@ -64,7 +64,7 @@ void OpenMPRunner::run() {
 
     auto *population = new Chromosome[population_size];
 
-#pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static)
     for (int i = 0; i < population_size; ++i) {
         Chromosome chromosome(gene_length);
         population[i] = chromosome;
@@ -81,14 +81,16 @@ void OpenMPRunner::run() {
         generation++;
     }
 
+    delete[] population;
+
     double end = omp_get_wtime();
     running_time = static_cast<long long>((end - start) * 1000);
 }
 
 void OpenMPRunner::show_running_info() {
-#pragma omp parallel
+    #pragma omp parallel
     {
-#pragma omp single
+        #pragma omp single
         std::cout << "Using " << omp_get_num_threads() << " OpenMP threads" << std::endl;
     }
 
@@ -110,5 +112,4 @@ void OpenMPRunner::show_solutions() {
         solution.show_chessboard();
     }
     std::cout << "Generation: " << generation << std::endl;
-
 }

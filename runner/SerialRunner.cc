@@ -76,6 +76,8 @@ void SerialRunner::run() {
         generation++;
     }
 
+    delete[] population;
+
     auto end = std::chrono::high_resolution_clock::now();
     running_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 }

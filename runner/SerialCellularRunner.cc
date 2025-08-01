@@ -1,5 +1,4 @@
 #include <random>
-#include <iostream>
 #include "SerialCellularRunner.h"
 
 Chromosome *SerialCellularRunner::generate_population(const Chromosome population[]) {
