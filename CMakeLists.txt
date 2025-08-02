@@ -20,7 +20,9 @@ add_executable(parallel_ga main.cc
         runner/OpenMPCellularRunner.h
         runner/OpenMPCellularRunner.cc
         runner/MPIRunner.h
-        runner/MPIRunner.cc)
+        runner/MPIRunner.cc
+        runner/MPICellularRunner.h
+        runner/MPICellularRunner.cc)
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(parallel_ga PRIVATE OpenMP::OpenMP_CXX)

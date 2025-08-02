@@ -19,7 +19,7 @@ protected:
 
     void find_solutions(const Chromosome population[]) override;
 
-    Chromosome *sharding_population(Chromosome population[]);
+    virtual Chromosome *sharding_population(Chromosome population[]);
 
     void sync_solutions();
 

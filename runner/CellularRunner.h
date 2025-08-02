@@ -11,6 +11,8 @@ protected:
 
     CellularRunner();
 
+    void build_cellular(int population_size);
+
     Chromosome pick_parent_from_neighbors(const Chromosome population[], int row, int col) const;
 };
 

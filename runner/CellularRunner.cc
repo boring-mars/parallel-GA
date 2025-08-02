@@ -2,10 +2,16 @@
 #include <iostream>
 #include "CellularRunner.h"
 
-CellularRunner::CellularRunner()
-        : cellular_row_size(RunningConfig::cellular_row_size),
-          cellular_col_size(RunningConfig::cellular_col_size) {
-    // TODO: Automatically calculate cellular_row_size and cellular_col_size based on population_size
+CellularRunner::CellularRunner() {
+    build_cellular(population_size);
+}
+
+void CellularRunner::build_cellular(int population_size) {
+    cellular_row_size = static_cast<int>(std::sqrt(population_size));
+    while (population_size % cellular_row_size != 0) {
+        cellular_row_size--;
+    }
+    cellular_col_size = population_size / cellular_row_size;
 }
 
 Chromosome CellularRunner::pick_parent_from_neighbors(const Chromosome population[], int row, int col) const {
