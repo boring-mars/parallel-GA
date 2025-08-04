@@ -3,6 +3,9 @@
 
 #include "Runner.h"
 
+/**
+ * Runner for the genetic algorithm in serial mode
+ */
 class SerialRunner : public virtual Runner {
 
 protected:

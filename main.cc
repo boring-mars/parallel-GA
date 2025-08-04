@@ -6,7 +6,11 @@
 #include "runner/MPIRunner.h"
 #include "runner/MPICellularRunner.h"
 
+/**
+ * This is the entry point of the program
+ */
 int main() {
+    // Choose the runner to use
 //    SerialRunner runner;
 //    SerialCellularRunner runner;
 //    OpenMPRunner runner;
@@ -14,8 +18,11 @@ int main() {
 //    MPIRunner runner;
     MPICellularRunner runner;
 
+    // Run the genetic algorithm
     runner.run();
+
+    // Show the running information and solutions found
     runner.show_running_info();
-//    runner.show_solutions();
+    runner.show_solutions();
     return 0;
 }

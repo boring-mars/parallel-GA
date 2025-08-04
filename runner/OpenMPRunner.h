@@ -3,6 +3,10 @@
 
 #include "Runner.h"
 
+/**
+ * Runner for the genetic algorithm using OpenMP
+ * The number of threads is determined by the running environment
+ */
 class OpenMPRunner : public virtual Runner {
 
 protected:

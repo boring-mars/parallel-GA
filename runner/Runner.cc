@@ -1,6 +1,7 @@
 #include "Runner.h"
 
 Runner::Runner()
+        // Init the runner with the running configuration
         : max_generation(RunningConfig::max_generation),
           gene_length(RunningConfig::gene_length),
           max_fitness(gene_length * (gene_length - 1) / 2),

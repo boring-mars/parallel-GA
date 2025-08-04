@@ -4,6 +4,10 @@
 #include "OpenMPRunner.h"
 #include "CellularRunner.h"
 
+/**
+ * Runner for the cellular genetic algorithm using OpenMP
+ * The number of threads is determined by the running environment
+ */
 class OpenMPCellularRunner : public OpenMPRunner, public CellularRunner {
 
 protected:

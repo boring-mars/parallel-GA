@@ -4,6 +4,9 @@
 #include "SerialRunner.h"
 #include "CellularRunner.h"
 
+/**
+ * Runner for the cellular genetic algorithm in serial mode
+ */
 class SerialCellularRunner : public SerialRunner, public CellularRunner {
 
 protected:

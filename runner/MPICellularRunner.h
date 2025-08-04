@@ -4,6 +4,10 @@
 #include "MPIRunner.h"
 #include "CellularRunner.h"
 
+/**
+ * Runner for the cellular genetic algorithm using MPI and OpenMP
+ * The numbers of processes and threads are determined by the running environment
+ */
 class MPICellularRunner : public MPIRunner, public CellularRunner {
 
 protected:
